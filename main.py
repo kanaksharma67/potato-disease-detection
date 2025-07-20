@@ -2,6 +2,9 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
 
+import os
+
+
 # --- Constants ---
 EPOCHS = 50
 IMG_SIZE = (256, 256)
@@ -106,5 +109,6 @@ for image_batch , label_batch in test_ds.take(1):
     predicted_labels = tf.argmax(predictions, axis=1)
     print("Predicted labels:", predicted_labels.numpy())
     print("True labels:", label_batch[0].numpy())
-model_version=1
+model_version=max([int(i) for i in os.listdir("../models/")+[0]])+1
 model.save(f"../models/plant_disease_model_v{model_version}.h5")
+
