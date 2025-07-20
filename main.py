@@ -65,3 +65,40 @@ data_augmentation=tf.keras.Sequential([
     layers.experimental.preprocessing.RandomZoom(0.2),
     layers.experimental.preprocessing.RandomContrast(0.2)
 ])
+
+model=models.Sequential([
+    resize_and_rescale,
+    data_augmentation,
+    layers.Conv2D(32,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(128,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64,(3,3),padding='same',activation='relu',input_shape=(256,256,3)),
+    layers.MaxPooling2D((2,2)),
+    #dense layers
+    layers.Flatten(),
+    layers.Dense(32,activation='relu'),
+    layers.Dropout(0.2),
+    layers.Dense(64,activation='relu'),
+    layers.Dropout(0.2),
+    layers.Dense(len(classNames),activation='softmax')
+    #softmax will normalize the probabiity of your classes
+
+
+])
+
+
+model.build((32,256,256,3))
+print(model.summary())
+
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+              metrics=['accuracy'])
+
+model.fit(train_ds,epochs=EPOCHS,validation_data=val_ds,batch_size=32,verbose=1)
